@@ -1,0 +1,411 @@
+<template>
+  <div class="profile">
+    <Navbar />
+    <div class="main-content">
+      <div class="profile-header">
+        <img :src="user.avatar" alt="用户头像" class="avatar">
+        <div class="user-info">
+          <h1>{{ user.name }}</h1>
+          <div class="user-stats">
+            <div class="stat-item">
+              <div class="stat-value">{{ user.collectionCount }}</div>
+              <div class="stat-label">收藏资料</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ user.searchCount }}</div>
+              <div class="stat-label">搜索记录</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ user.visitCount }}</div>
+              <div class="stat-label">访问记录</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">搜索历史</h2>
+        <div v-if="loading.searchHistory" class="loading">加载中...</div>
+        <ul v-else class="search-history">
+          <li v-for="(search, index) in searchHistory" :key="index" class="search-item">
+            <span class="search-term">{{ search.term }}</span>
+            <span class="search-time">{{ search.time }}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">访问记录</h2>
+        <div v-if="loading.visitedMaterials" class="loading">加载中...</div>
+        <div v-else class="visited-materials">
+          <MaterialCard 
+            v-for="material in visitedMaterials" 
+            :key="material.id" 
+            :material="material"
+            :show-visit-count="true"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import Navbar from '@/components/Navbar.vue';
+import MaterialCard from '@/components/MaterialCard.vue';
+import request from '@/utils/request';
+import { useUserStore } from '@/stores/user';
+
+// 获取用户ID
+const userStore = useUserStore();
+const userId = ref<number>(1); // 默认ID，实际应该从用户信息中获取
+
+// 加载状态
+const loading = ref({
+  searchHistory: false,
+  visitedMaterials: false
+});
+
+// 模拟用户数据
+const user = ref({
+  name: '用户名',
+  avatar: '/images/avatar.jpg',
+  collectionCount: 128,
+  searchCount: 56,
+  visitCount: 89
+});
+
+// 搜索历史数据
+const searchHistory = ref<{term: string, time: string}[]>([]);
+
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+const visitedMaterials = ref<{
+  id: string | number;
+  title: string;
+  description: string;
+  category: string;
+  image: string;
+  visitCount: number;
+}[]>([]);
+  {
+    id: 3,
+    title: 'UI设计规范指南',
+    description: '全面的UI设计规范和最佳实践指南...',
+    category: '设计资源',
+    image: '/images/placeholder.jpg',
+    visitCount: 8
+  }
+]);
+
+// 获取搜索历史
+const fetchSearchHistory = async () => {
+  loading.value.searchHistory = true;
+  try {
+    const userInfo = userStore.getUserInfo();
+    if (userInfo && userInfo.token) {
+      const response = await request.get(`/system/goods/getSearchHistory/${userId.value}`);
+      if (response.data && response.data.code === 200) {
+        // 根据后端实际返回的数据结构进行映射
+        searchHistory.value = response.data.data.map((item: any) => ({
+          term: item.searchContent,
+          time: item.searchTime
+        }));
+      }
+    }
+  } catch (error) {
+    console.error('获取搜索历史失败:', error);
+    // 清空数据，不再使用模拟数据
+    searchHistory.value = [];
+  } finally {
+    loading.value.searchHistory = false;
+  }
+};
+
+// 获取访问记录
+const fetchVisitedMaterials = async () => {
+  loading.value.visitedMaterials = true;
+  try {
+    const userInfo = userStore.getUserInfo();
+    if (userInfo && userInfo.token) {
+      const response = await request.get(`/system/goods/getCountInfo/${userId.value}`);
+      if (response.data && response.data.code === 200) {
+        // 后端数据格式适配，需要根据实际接口返回格式调整
+        visitedMaterials.value = response.data.data.map((item: any) => ({
+          id: item.id,
+          title: item.goodName,
+          description: item.goodDesc || '暂无描述',
+          category: item.classification || '未分类',
+          image: item.cover || '/images/placeholder.jpg',
+          visitCount: item.count || 0
+        }));
+      }
+    }
+  } catch (error) {
+    console.error('获取访问记录失败:', error);
+    // 保持使用模拟数据
+  } finally {
+    loading.value.visitedMaterials = false;
+  }
+};
+
+// 页面加载时获取数据
+onMounted(() => {
+  // 获取用户 ID
+  const userInfo = userStore.getUserInfo();
+  if (userInfo && userInfo.id) {
+    userId.value = userInfo.id;
+  }
+  
+  // 获取搜索历史和访问记录
+  fetchSearchHistory();
+  fetchVisitedMaterials();
+});
+</script>
+
+<style scoped>
+.profile {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.profile-header {
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-info h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.user-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.search-history {
+  list-style: none;
+}
+
+.search-item {
+  padding: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-item:last-child {
+  border-bottom: none;
+}
+
+.search-term {
+  font-weight: bold;
+  color: #333;
+}
+
+.search-time {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.visited-materials {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+}
+</style> 

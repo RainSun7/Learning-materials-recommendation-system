@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.project.system.mapper.TraditionalCraftGoodsMapper">
+    
+    <resultMap type="TraditionalCraftGoods" id="TraditionalCraftGoodsResult">
+        <result property="goodsId"    column="goods_id"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
+        <result property="stock"    column="stock"    />
+        <result property="craftsmanName"    column="craftsman_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="pic"    column="pic"    />
+        <result property="categoryId"    column="category_id"    />
+    </resultMap>
+
+    <sql id="selectTraditionalCraftGoodsVo">
+        select goods_id, goods_name, description, price, stock, craftsman_name, create_time, update_time, pic, category_id from traditional_craft_goods
+    </sql>
+
+    <select id="selectTraditionalCraftGoodsList" parameterType="TraditionalCraftGoods" resultMap="TraditionalCraftGoodsResult">
+        <include refid="selectTraditionalCraftGoodsVo"/>
+        <where>  
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="stock != null "> and stock = #{stock}</if>
+            <if test="craftsmanName != null  and craftsmanName != ''"> and craftsman_name like concat('%', #{craftsmanName}, '%')</if>
+            <if test="pic != null  and pic != ''"> and pic = #{pic}</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+        </where>
+    </select>
+    
+    <select id="selectTraditionalCraftGoodsByGoodsId" parameterType="Long" resultMap="TraditionalCraftGoodsResult">
+        <include refid="selectTraditionalCraftGoodsVo"/>
+        where goods_id = #{goodsId}
+    </select>
+
+    <insert id="insertTraditionalCraftGoods" parameterType="TraditionalCraftGoods" useGeneratedKeys="true" keyProperty="goodsId">
+        insert into traditional_craft_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">goods_name,</if>
+            <if test="description != null">description,</if>
+            <if test="price != null">price,</if>
+            <if test="stock != null">stock,</if>
+            <if test="craftsmanName != null">craftsman_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="pic != null">pic,</if>
+            <if test="categoryId != null">category_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">#{goodsName},</if>
+            <if test="description != null">#{description},</if>
+            <if test="price != null">#{price},</if>
+            <if test="stock != null">#{stock},</if>
+            <if test="craftsmanName != null">#{craftsmanName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="pic != null">#{pic},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTraditionalCraftGoods" parameterType="TraditionalCraftGoods">
+        update traditional_craft_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="craftsmanName != null">craftsman_name = #{craftsmanName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="pic != null">pic = #{pic},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+        </trim>
+        where goods_id = #{goodsId}
+    </update>
+
+    <delete id="deleteTraditionalCraftGoodsByGoodsId" parameterType="Long">
+        delete from traditional_craft_goods where goods_id = #{goodsId}
+    </delete>
+
+    <delete id="deleteTraditionalCraftGoodsByGoodsIds" parameterType="String">
+        delete from traditional_craft_goods where goods_id in 
+        <foreach item="goodsId" collection="array" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </delete>
+</mapper>

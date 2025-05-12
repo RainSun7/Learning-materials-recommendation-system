@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.project.system.mapper.SysBookCategoryMapper">
+    
+    <resultMap type="SysBookCategory" id="SysBookCategoryResult">
+        <result property="categoryId"    column="category_id"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="categoryDescription"    column="category_description"    />
+    </resultMap>
+
+    <sql id="selectSysBookCategoryVo">
+        select category_id, category_name, category_description from sys_book_category
+    </sql>
+
+    <select id="selectSysBookCategoryList" parameterType="SysBookCategory" resultMap="SysBookCategoryResult">
+        <include refid="selectSysBookCategoryVo"/>
+        <where>  
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="categoryDescription != null  and categoryDescription != ''"> and category_description = #{categoryDescription}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysBookCategoryByCategoryId" parameterType="Long" resultMap="SysBookCategoryResult">
+        <include refid="selectSysBookCategoryVo"/>
+        where category_id = #{categoryId}
+    </select>
+
+    <insert id="insertSysBookCategory" parameterType="SysBookCategory" useGeneratedKeys="true" keyProperty="categoryId">
+        insert into sys_book_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">category_name,</if>
+            <if test="categoryDescription != null">category_description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">#{categoryName},</if>
+            <if test="categoryDescription != null">#{categoryDescription},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysBookCategory" parameterType="SysBookCategory">
+        update sys_book_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="categoryDescription != null">category_description = #{categoryDescription},</if>
+        </trim>
+        where category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteSysBookCategoryByCategoryId" parameterType="Long">
+        delete from sys_book_category where category_id = #{categoryId}
+    </delete>
+
+    <delete id="deleteSysBookCategoryByCategoryIds" parameterType="String">
+        delete from sys_book_category where category_id in 
+        <foreach item="categoryId" collection="array" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.project.system.mapper.SysBookMapper">
+    
+    <resultMap type="SysBook" id="SysBookResult">
+        <result property="bookId"    column="book_id"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="bookName"    column="book_name"    />
+        <result property="author"    column="author"    />
+        <result property="price"    column="price"    />
+        <result property="publishDate"    column="publish_date"    />
+        <result property="stock"    column="stock"    />
+        <result property="pic"    column="pic"    />
+    </resultMap>
+
+    <sql id="selectSysBookVo">
+        select book_id, category_id, book_name, author, price, publish_date, stock, pic from sys_book
+    </sql>
+
+    <select id="selectSysBookList" parameterType="SysBook" resultMap="SysBookResult">
+        <include refid="selectSysBookVo"/>
+        <where>  
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="bookName != null  and bookName != ''"> and book_name like concat('%', #{bookName}, '%')</if>
+            <if test="author != null  and author != ''"> and author = #{author}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="publishDate != null "> and publish_date = #{publishDate}</if>
+            <if test="stock != null "> and stock = #{stock}</if>
+            <if test="pic != null  and pic != ''"> and pic = #{pic}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysBookByBookId" parameterType="Long" resultMap="SysBookResult">
+        <include refid="selectSysBookVo"/>
+        where book_id = #{bookId}
+    </select>
+
+    <insert id="insertSysBook" parameterType="SysBook" useGeneratedKeys="true" keyProperty="bookId">
+        insert into sys_book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">category_id,</if>
+            <if test="bookName != null">book_name,</if>
+            <if test="author != null">author,</if>
+            <if test="price != null">price,</if>
+            <if test="publishDate != null">publish_date,</if>
+            <if test="stock != null">stock,</if>
+            <if test="pic != null">pic,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="bookName != null">#{bookName},</if>
+            <if test="author != null">#{author},</if>
+            <if test="price != null">#{price},</if>
+            <if test="publishDate != null">#{publishDate},</if>
+            <if test="stock != null">#{stock},</if>
+            <if test="pic != null">#{pic},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysBook" parameterType="SysBook">
+        update sys_book
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="bookName != null">book_name = #{bookName},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="publishDate != null">publish_date = #{publishDate},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="pic != null">pic = #{pic},</if>
+        </trim>
+        where book_id = #{bookId}
+    </update>
+
+    <delete id="deleteSysBookByBookId" parameterType="Long">
+        delete from sys_book where book_id = #{bookId}
+    </delete>
+
+    <delete id="deleteSysBookByBookIds" parameterType="String">
+        delete from sys_book where book_id in 
+        <foreach item="bookId" collection="array" open="(" separator="," close=")">
+            #{bookId}
+        </foreach>
+    </delete>
+</mapper>

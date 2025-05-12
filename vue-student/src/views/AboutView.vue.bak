@@ -1,0 +1,360 @@
+<template>
+  <div class="home">
+    <Navbar />
+    <div class="banner">
+      <div class="banner-content">
+        <h1 class="banner-title">资料浏览</h1>
+        <p class="banner-description">我们致力于为您提供最优质的学习资源</p>
+        <div class="search-box">
+          <input 
+            type="text" 
+            v-model="searchQuery"
+            placeholder="搜索你感兴趣的资料..." 
+            class="search-input"
+            @keyup.enter="handleSearch"
+          >
+          <button class="search-button" @click="handleSearch">搜索</button>
+        </div>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="filters">
+        <div class="section-title">推荐资料</div>
+        <div class="category-filters">
+          <button 
+            class="category-btn"
+            :class="{ active: selectedCategory === null }"
+            @click="handleCategoryChange(null)"
+          >
+            全部
+          </button>
+          <button 
+            v-for="category in categories" 
+            :key="category.categoryId"
+            :class="['category-btn', { active: selectedCategory === category.categoryId }]"
+            @click="handleCategoryChange(category.categoryId)"
+          >
+            {{ category.categoryName }}
+          </button>
+        </div>
+      </div>
+      <div class="materials-grid">
+        <MaterialCard 
+          v-for="material in materials" 
+          :key="material.goodsId" 
+          :material="{
+            id: material.goodsId,
+            title: material.goodsName,
+            description: material.description,
+            category: categories.find(c => c.categoryId === material.categoryId)?.categoryName || '未分类',
+            image: material.pic?.startsWith('http') ? material.pic : baseURL + material.pic,
+            visitCount: 0
+          }"
+          :showVisitCount="false"
+        />
+      </div>
+      <!-- 分页 -->
+      <div class="pagination">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[12, 24, 36, 48]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import Navbar from '@/components/Navbar.vue';
+import MaterialCard from '@/components/MaterialCard.vue';
+import request from '@/utils/request';
+import { ElMessage } from 'element-plus';
+
+interface Category {
+  categoryId: number;
+  categoryName: string;
+}
+
+interface Material {
+  goodsId: number;
+  goodsName: string;
+  description: string;
+  pic: string;
+  categoryId: number;
+  createTime: string;
+  updateTime: string;
+}
+
+interface ApiResponse<T> {
+  code: number;
+  msg: string;
+  data?: T;
+  total?: number;
+  rows?: T[];
+}
+
+const baseURL = 'http://localhost:8081';
+const searchQuery = ref('');
+const selectedCategory = ref<number | null>(null);
+const categories = ref<Category[]>([]);
+const materials = ref<Material[]>([]);
+const currentPage = ref(1);
+const pageSize = ref(12);
+const total = ref(0);
+
+// 获取分类列表
+const fetchCategories = async () => {
+  try {
+    const response = await request.get<any, ApiResponse<Category[]>>('/system/category/withBookCount');
+    const resData = response.data || response as unknown as ApiResponse<Category[]>;
+    if (resData.code === 200) {
+      categories.value = resData.data || [];
+    }
+  } catch (error) {
+    console.error('获取分类列表失败：', error);
+  }
+};
+
+// 获取资料列表
+const fetchMaterials = async () => {
+  try {
+    const response = await request.get<any, ApiResponse<Material[]>>('/system/goods/list', {
+      params: {
+        pageNum: currentPage.value,
+        pageSize: pageSize.value,
+        goodsName: searchQuery.value || undefined,
+        categoryId: selectedCategory.value || undefined
+      }
+    });
+    
+    const resData = response.data || response as unknown as ApiResponse<Material[]>;
+    if (resData.code === 200 && Array.isArray(resData.rows)) {
+      materials.value = resData.rows;
+      total.value = resData.total || 0;
+    } else {
+      ElMessage.error(resData.msg || '获取资料列表失败');
+    }
+  } catch (error) {
+    console.error('获取资料列表失败：', error);
+  }
+};
+
+// 处理分类切换
+const handleCategoryChange = (categoryId: number | null) => {
+  selectedCategory.value = categoryId;
+  currentPage.value = 1;
+  fetchMaterials();
+};
+
+// 处理搜索
+const handleSearch = () => {
+  currentPage.value = 1;
+  fetchMaterials();
+};
+
+// 处理页码变化
+const handleCurrentChange = (page: number) => {
+  currentPage.value = page;
+  fetchMaterials();
+};
+
+// 处理每页条数变化
+const handleSizeChange = (size: number) => {
+  pageSize.value = size;
+  currentPage.value = 1;
+  fetchMaterials();
+};
+
+onMounted(() => {
+  fetchCategories();
+  fetchMaterials();
+});
+</script>
+
+<style scoped>
+.home {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.banner {
+  height: 500px;
+  background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/images/pattern.png') repeat;
+  opacity: 0.1;
+  animation: movePattern 20s linear infinite;
+}
+
+@keyframes movePattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 100% 100%; }
+}
+
+.banner-content {
+  max-width: 800px;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.banner-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.banner-description {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.search-box {
+  display: flex;
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 30px;
+  padding: 5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-button {
+  background: #1890ff;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.search-button:hover {
+  background: #40a9ff;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.category-filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  padding: 8px 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 20px;
+  background: white;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.category-btn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.category-btn.active {
+  background: #1890ff;
+  color: white;
+  border-color: #1890ff;
+}
+
+.materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .banner {
+    height: 400px;
+  }
+  
+  .banner-title {
+    font-size: 2rem;
+  }
+  
+  .filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .search-box {
+    flex-direction: column;
+    background: none;
+    box-shadow: none;
+  }
+  
+  .search-input {
+    margin-bottom: 10px;
+    border-radius: 25px;
+  }
+  
+  .search-button {
+    width: 100%;
+  }
+}
+</style> 

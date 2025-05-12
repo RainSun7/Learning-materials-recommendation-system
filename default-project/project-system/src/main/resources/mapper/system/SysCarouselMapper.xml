@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.project.system.mapper.SysCarouselMapper">
+    
+    <resultMap type="SysCarousel" id="SysCarouselResult">
+        <result property="carouselId"    column="carousel_id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="linkUrl"    column="link_url"    />
+        <result property="displayOrder"    column="display_order"    />
+        <result property="title"    column="title"    />
+        <result property="description"    column="description"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysCarouselVo">
+        select carousel_id, image_url, link_url, display_order, title, description, status, create_time, update_time from sys_carousel
+    </sql>
+
+    <select id="selectSysCarouselList" parameterType="SysCarousel" resultMap="SysCarouselResult">
+        <include refid="selectSysCarouselVo"/>
+        <where>  
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="linkUrl != null  and linkUrl != ''"> and link_url = #{linkUrl}</if>
+            <if test="displayOrder != null "> and display_order = #{displayOrder}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysCarouselByCarouselId" parameterType="Long" resultMap="SysCarouselResult">
+        <include refid="selectSysCarouselVo"/>
+        where carousel_id = #{carouselId}
+    </select>
+
+    <insert id="insertSysCarousel" parameterType="SysCarousel" useGeneratedKeys="true" keyProperty="carouselId">
+        insert into sys_carousel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imageUrl != null and imageUrl != ''">image_url,</if>
+            <if test="linkUrl != null">link_url,</if>
+            <if test="displayOrder != null">display_order,</if>
+            <if test="title != null">title,</if>
+            <if test="description != null">description,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imageUrl != null and imageUrl != ''">#{imageUrl},</if>
+            <if test="linkUrl != null">#{linkUrl},</if>
+            <if test="displayOrder != null">#{displayOrder},</if>
+            <if test="title != null">#{title},</if>
+            <if test="description != null">#{description},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCarousel" parameterType="SysCarousel">
+        update sys_carousel
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imageUrl != null and imageUrl != ''">image_url = #{imageUrl},</if>
+            <if test="linkUrl != null">link_url = #{linkUrl},</if>
+            <if test="displayOrder != null">display_order = #{displayOrder},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where carousel_id = #{carouselId}
+    </update>
+
+    <delete id="deleteSysCarouselByCarouselId" parameterType="Long">
+        delete from sys_carousel where carousel_id = #{carouselId}
+    </delete>
+
+    <delete id="deleteSysCarouselByCarouselIds" parameterType="String">
+        delete from sys_carousel where carousel_id in 
+        <foreach item="carouselId" collection="array" open="(" separator="," close=")">
+            #{carouselId}
+        </foreach>
+    </delete>
+</mapper>
