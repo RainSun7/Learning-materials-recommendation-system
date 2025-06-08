@@ -26,10 +26,7 @@ import cn.project.common.utils.poi.ExcelUtil;
 import cn.project.common.core.page.TableDataInfo;
 
 /**
- * 传统工艺Controller
- * 
- * @author default
- * @date 2025-03-07
+ * Controller
  */
 @RestController
 @RequestMapping("/system/goods")
@@ -40,7 +37,7 @@ public class TraditionalCraftGoodsController extends BaseController
 @Autowired
 private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     /**
-     * 查询传统工艺列表
+     * 查询列表
      */
     //    @PreAuthorize("@ss.hasPermi('system:goods:list')")
     @GetMapping("/list")
@@ -64,7 +61,7 @@ private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     }
 
     /**
-     * 导出传统工艺列表
+     * 导出列表
      */
     @PreAuthorize("@ss.hasPermi('system:goods:export')")
     @Log(title = "传统工艺", businessType = BusinessType.EXPORT)
@@ -76,7 +73,7 @@ private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
         util.exportExcel(response, list, "传统工艺数据");
     }
     /**
-     * 获取传统工艺详细信息
+     * 获取详细信息
      */
     //    @PreAuthorize("@ss.hasPermi('system:goods:query')")
     @GetMapping(value = "/{goodsId}")
@@ -84,14 +81,7 @@ private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     {
         TraditionalCraftGoods traditionalCraftGoods = traditionalCraftGoodsService.selectTraditionalCraftGoodsByGoodsId(goodsId);
 
-        //保存访问次数 visits
-//         good_id         varchar(100)
-// good_name        varchar(100)
-// good_desc        varchar(100)
-// classification        varchar(100)
-//   cover       varchar(256)
-// user_id         varchar(32)
-// count      int
+
         //通过namedParameterJdbcTemplate 查询visits表中是否有该goodsId
         String sql = "SELECT * FROM visits WHERE good_id = :goodId and user_id = :userId";
         Map<String, Object> params = new HashMap<>();
@@ -167,7 +157,7 @@ private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     }
 
     /**
-     * 新增传统工艺
+     * 新增
      */
     @PreAuthorize("@ss.hasPermi('system:goods:add')")
     @Log(title = "传统工艺", businessType = BusinessType.INSERT)
@@ -178,7 +168,7 @@ private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     }
 
     /**
-     * 修改传统工艺
+     * 修改
      */
     @PreAuthorize("@ss.hasPermi('system:goods:edit')")
     @Log(title = "传统工艺", businessType = BusinessType.UPDATE)
@@ -189,7 +179,7 @@ private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     }
 
     /**
-     * 删除传统工艺
+     * 删除
      */
     @PreAuthorize("@ss.hasPermi('system:goods:remove')")
     @Log(title = "传统工艺", businessType = BusinessType.DELETE)

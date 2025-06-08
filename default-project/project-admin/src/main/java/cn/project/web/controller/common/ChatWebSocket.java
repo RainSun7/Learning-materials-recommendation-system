@@ -2,7 +2,10 @@ package cn.project.web.controller.common;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -89,4 +92,6 @@ public class ChatWebSocket {
 //            sendMessageToUser("admin", msg,null);
 //        }
     }
+
+
 }
